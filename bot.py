@@ -31,6 +31,7 @@ def resposta_certa(message):
     create_user_obj(message)
     user.user_points = user.user_points * 1 + 1
     #deletar_message(message)
+    quiz.current_answering = False
     bot.send_message(
         user.user_chat_id,
         "Resposta certa, +1 ponto\n\n/continuar_quiz\n\n/ver_minha_pontuacao\n\n/menu"
@@ -42,40 +43,58 @@ def resposta_certa(message):
 def resposta_errada(message):
     create_user_obj(message)
     #deletar_message(message)
+    quiz.current_answering = False
     bot.send_message(
         user.user_chat_id,
         "Resposta errada!\n\n/continuar_quiz\n\n/ver_minha_pontuacao\n\n/menu"
     )
 
-########################################
+##################################################################
+# RESPOSTAS
+##################################################################
 @bot.message_handler(commands=["__A__"])
 def resposta_a(message):
-
     create_user_obj(message)
-    if quiz.answer_quiz(0):
-        resposta_certa(message)
+    if quiz.current_answering != 0:
+        if quiz.answer_quiz(0):
+            resposta_certa(message)
+        else:
+            resposta_errada(message)
     else:
-        resposta_errada(message)
+        bot.send_message(
+            user.user_chat_id,
+            "Você não pode mais responder esta questão!"
+        )
 
 
 @bot.message_handler(commands=["__B__"])
 def resposta_a(message):
-
     create_user_obj(message)
-    if quiz.answer_quiz(1):
-        resposta_certa(message)
+    if quiz.current_answering != 0:
+        if quiz.answer_quiz(1):
+            resposta_certa(message)
+        else:
+            resposta_errada(message)
     else:
-        resposta_errada(message)
+        bot.send_message(
+            user.user_chat_id,
+            "Você não pode mais responder esta questão!"
+        )
 
 
 @bot.message_handler(commands=["__C__"])
 def resposta_a(message):
-
     create_user_obj(message)
-    if quiz.answer_quiz(2):
-        resposta_certa(message)
+    if quiz.current_answering != 0:
+        if quiz.answer_quiz(2):
+            resposta_certa(message)
+        else:
+            resposta_errada(message)
     else:
-        resposta_errada(message)
+        bot.send_message(
+            user.user_chat_id,
+            "Você não pode mais responder esta questão!"
+        )
 ##################################################################
 # COMANDO PARA CRIAR O QUIZ
 ##################################################################
@@ -97,6 +116,7 @@ def start_quiz(message):
         user.user_chat_id,
         quiz.create_quiz(current_question)
     )
+    quiz.current_answering = 1
     #get_num_of_answers(quiz.quiz_questions[current_question])
 #################################################################
 # Termos
@@ -121,7 +141,7 @@ def show_menu(message):
     else:
         bot.send_message(
             user.user_chat_id,
-            "Menu inicial:\n\n/me_cadastrar"
+            "Menu inicial:\n\n/me_cadastrar\n\n/termos\n\n/deletar_minha_conta"
         )
 
 ##################################################################
